@@ -335,7 +335,7 @@ El sistema está listo para ejecutarse localmente y puede adaptarse fácilmente 
 
 ## 👨‍💻 Desarrollador
 
-**Postulación:** Analista Programador - Oficina de Sistemas  
+**Postulación:** SANTOS MEJIA VASQUEZ
 **Tecnologías:** Laravel 12, PHP 8.2, Bootstrap 5.3, MySQL  
 **Fecha:** Febrero 2026
 
