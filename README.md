@@ -350,3 +350,12 @@ Este proyecto es de uso exclusivo para fines de demostración en proceso de sele
 <p align="center">
   <strong>Desarrollado con ❤️ para el Ministerio Público del Perú</strong>
 </p>
+
+
+<img width="1136" height="865" alt="image" src="https://github.com/user-attachments/assets/a7f38813-3953-40c8-9f0d-99f3a78f09cb" />
+
+<img width="1180" height="884" alt="image" src="https://github.com/user-attachments/assets/a7001b69-850d-478b-9322-4cb78cd2e9ca" />
+
+<img width="1223" height="771" alt="image" src="https://github.com/user-attachments/assets/457fed77-0271-4118-b523-13a27a604418" />
+
+
