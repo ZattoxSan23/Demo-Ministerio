@@ -1,7 +1,37 @@
+# Notas de mantenimiento y alcance
+
+El framework declarado en `composer.json` es **Laravel 11** con PHP 8.2+, no Laravel 12. Este es un demo de gestión documental; las capturas y descripción de abajo no sustituyen pruebas de instalación.
+
+## Correcciones en adjuntos
+
+Los adjuntos se guardan y consultan explícitamente en el disco `public`. Una sustitución guarda primero el PDF nuevo y actualiza la base antes de borrar el anterior. Si falla la actualización se limpia el PDF nuevo; el antiguo permanece. El borrado lógico del documento conserva el archivo para permitir su restauración.
+
+Los archivos actuales usan almacenamiento público: para información confidencial hay que migrarlos a un disco privado y servirlos mediante una ruta autorizada. No basta con ocultar el botón de descarga.
+
+## Verificación disponible
+
+```sh
+composer install
+php artisan key:generate
+php artisan test
+```
+
+Las pruebas incluidas verifican la resolución del archivo aunque el disco predeterminado sea `local`, y el comportamiento con archivos ausentes. No requieren migrar una base de datos. Faltan pruebas de reemplazo fallido, autorización y transiciones de estado.
+
+## Pendientes concretos
+
+- Número de expediente: el cálculo con `count() + 1` tiene riesgo de colisión bajo concurrencia; requiere una secuencia o reserva transaccional y restricción única.
+- Restringir asignación de fiscal y campos editables por rol en Form Requests.
+- Unificar las reglas de autorización entre listado, acciones y formularios.
+- Eliminar cachés compiladas y logs del seguimiento de Git tras revisar lo que contienen.
+- Añadir dependencias bloqueadas para instalaciones reproducibles y validar la instalación desde cero.
+
+---
+
 # Sistema de Gestión de Documentos y Trámites Básico (Demo MPFN)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12">
+  <img src="https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 11">
   <img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2">
   <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap 5.3">
   <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
@@ -31,7 +61,7 @@ Este sistema es una **demostración técnica** desarrollada para una postulació
 
 | Tecnología | Versión | Propósito |
 |------------|---------|-----------|
-| **Laravel** | 12.x | Framework PHP Backend |
+| **Laravel** | 11.x | Framework PHP Backend |
 | **PHP** | 8.2+ | Lenguaje de programación |
 | **Bootstrap** | 5.3 | Framework CSS Frontend |
 | **MySQL/MariaDB** | 8.0+ | Base de datos |
@@ -320,7 +350,7 @@ Detalle completo con acciones rápidas y descarga de PDF.
 
 Este proyecto fue desarrollado como **demostración técnica** para una postulación CAS. Incluye:
 
-1. **Arquitectura MVC** estricta con Laravel 12
+1. **Arquitectura MVC** estricta con Laravel 11
 2. **Control de acceso** basado en roles (RBAC) con Spatie
 3. **CRUD completo** con validaciones server-side
 4. **Reportes PDF** con Dompdf
@@ -336,7 +366,7 @@ El sistema está listo para ejecutarse localmente y puede adaptarse fácilmente 
 ## 👨‍💻 Desarrollador
 
 **Postulación:** SANTOS MEJIA VASQUEZ
-**Tecnologías:** Laravel 12, PHP 8.2, Bootstrap 5.3, MySQL  
+**Tecnologías:** Laravel 11, PHP 8.2, Bootstrap 5.3, MySQL  
 **Fecha:** Febrero 2026
 
 ---

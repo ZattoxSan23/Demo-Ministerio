@@ -267,30 +267,39 @@ class DocumentoController extends Controller
     {
         $data = $request->validated();
 
-        // Manejar eliminación de archivo existente
-        if ($request->boolean('eliminar_archivo') && $documento->tiene_archivo) {
-            $this->eliminarArchivo($documento);
+        $rutaAnterior = $documento->archivo_ruta;
+        $rutaNueva = null;
+
+        // Store the replacement first. A failed upload must not delete the original.
+        if ($request->hasFile('archivo')) {
+            $data = $this->procesarArchivo($request, $data);
+            $rutaNueva = $data['archivo_ruta'];
+        } elseif ($request->boolean('eliminar_archivo')) {
             $data['archivo_ruta'] = null;
             $data['archivo_nombre_original'] = null;
             $data['archivo_tamano'] = null;
         }
 
-        // Manejar nuevo archivo PDF
-        if ($request->hasFile('archivo')) {
-            // Eliminar archivo anterior si existe
-            if ($documento->tiene_archivo) {
-                $this->eliminarArchivo($documento);
-            }
-            $data = $this->procesarArchivo($request, $data);
-        }
-
-        // Actualizar fecha de resolución si cambia a estado final
-        if (in_array($data['estado'] ?? $documento->estado, ['Resuelto', 'Archivado']) && 
+        if (in_array($data['estado'] ?? $documento->estado, ['Resuelto', 'Archivado']) &&
             empty($data['fecha_resolucion'])) {
-            $data['fecha_resolucion'] = now()->format('Y-m-d');
+            $data['fecha_resolucion'] = $documento->fecha_resolucion ?? now()->format('Y-m-d');
         }
 
-        $documento->update($data);
+        unset($data['archivo'], $data['eliminar_archivo']);
+
+        try {
+            $documento->update($data);
+        } catch (\Throwable $exception) {
+            if ($rutaNueva) {
+                Storage::disk('public')->delete($rutaNueva);
+            }
+            throw $exception;
+        }
+
+        // Only remove the old file once the database points to its replacement.
+        if ($rutaAnterior && $rutaAnterior !== $documento->archivo_ruta) {
+            Storage::disk('public')->delete($rutaAnterior);
+        }
 
         return redirect()
             ->route('documentos.show', $documento)
@@ -321,11 +330,7 @@ class DocumentoController extends Controller
         // Verificar permiso de eliminación
         $this->authorize('eliminar', $documento);
 
-        // Eliminar archivo adjunto si existe
-        if ($documento->tiene_archivo) {
-            $this->eliminarArchivo($documento);
-        }
-
+        // Preserve the attachment when soft deleting; restoration needs the file.
         $numeroExpediente = $documento->numero_expediente;
         $documento->delete();
 

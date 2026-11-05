@@ -259,7 +259,7 @@ class Documento extends Model
      */
     public function getTieneArchivoAttribute(): bool
     {
-        return !is_null($this->archivo_ruta) && Storage::exists($this->archivo_ruta);
+        return !is_null($this->archivo_ruta) && Storage::disk('public')->exists($this->archivo_ruta);
     }
 
     /**
@@ -267,7 +267,7 @@ class Documento extends Model
      */
     public function getArchivoUrlAttribute(): ?string
     {
-        return $this->tiene_archivo ? Storage::url($this->archivo_ruta) : null;
+        return $this->tiene_archivo ? Storage::disk('public')->url($this->archivo_ruta) : null;
     }
 
     /**
